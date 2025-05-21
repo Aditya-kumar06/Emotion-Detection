@@ -49,3 +49,4 @@ def detect_emotion_from_webcam():
     # Step 5: Release the webcam and close all OpenCV windows
     cap.release()
     cv2.destroyAllWindows()
+    detect_emotion_from_webcam()
