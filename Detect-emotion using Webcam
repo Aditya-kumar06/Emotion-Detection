@@ -1,0 +1,51 @@
+def detect_emotion_from_webcam():
+    # Step 1: Start video capture from the default camera (0)
+    cap = cv2.VideoCapture(1)
+
+    # Check if the webcam is opened successfully
+    if not cap.isOpened():
+        print("Error: Could not open webcam.")
+        return
+
+    # Step 2: Continuously capture frames from the webcam
+    while True:
+        # Capture each frame from the webcam
+        ret, frame = cap.read()
+        if not ret:
+            print("Failed to capture frame.")
+            break
+            # Resize the frame for faster processing
+        resized_frame = cv2.resize(frame, (640, 480))
+
+        try:
+            # Step 3: Use DeepFace to analyze the frame for emotions
+            # enforce_detection=True ensures that a face must be detected
+            result = DeepFace.analyze(
+                img_path=resized_frame,
+                actions=['emotion'],
+                enforce_detection=True,  # Ensures face detection
+                detector_backend='opencv'  # Use OpenCV backend for face detection
+            )
+
+            # Extract the dominant emotion from the analysis result
+            emotion = result[0]['dominant_emotion']
+            # Display the detected emotion on the frame
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            cv2.putText(resized_frame, f'Emotion: {emotion}', (50, 50), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+
+        except Exception as e:
+            # Handle exceptions if face or emotion detection fails
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            cv2.putText(resized_frame, 'No face detected', (50, 50), font, 1, (0, 0, 255), 2, cv2.LINE_AA)
+            print("Face not detected. Please ensure your face is visible to the camera.")
+
+        # Show the frame with the detected emotion displayed
+        cv2.imshow("Webcam - Press 'q' to Quit", resized_frame)
+
+        # Step 4: Exit the loop when 'q' key is pressed
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    # Step 5: Release the webcam and close all OpenCV windows
+    cap.release()
+    cv2.destroyAllWindows()
