@@ -1,3 +1,5 @@
+import cv2  # OpenCV for webcam access and image processing
+from deepface import DeepFace  # DeepFace for facial emotion detection
 def detect_emotion_from_webcam():
     # Step 1: Start video capture from the default camera (0)
     cap = cv2.VideoCapture(1)
